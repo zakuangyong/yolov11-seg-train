@@ -1,0 +1,7 @@
+datasets/
+models/sam/
+runs/
+*.pth
+*.pt
+*.onnx
+*.engine
