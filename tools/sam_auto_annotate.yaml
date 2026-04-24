@@ -1,0 +1,46 @@
+# SAM Auto-Annotate Configuration
+# 用于 YOLO-seg 数据集自动标注
+
+# 输入输出路径
+input_dir: datasets/raw-img
+output_dir: datasets/carparts-seg-supplement
+
+# SAM 模型配置
+sam:
+  model_type: vit_h  # vit_h, vit_l, vit_b
+  weights_path: models/sam/sam_vit_h.pth
+  device: cuda  # cuda 或 cpu
+
+# 数据集划分比例 (train, val, test)
+split_ratios: [0.8, 0.1, 0.1]
+
+# 标注参数
+annotation:
+  min_area: 500  # 最小掩码面积阈值
+  visualize: true  # 是否保存可视化标注
+
+# 类别名称 (与 carparts-seg.yaml 保持一致)
+class_names:
+  - back_bumper
+  - back_door
+  - back_glass
+  - back_left_door
+  - back_left_light
+  - back_light
+  - back_right_door
+  - back_right_light
+  - front_bumper
+  - front_door
+  - front_glass
+  - front_left_door
+  - front_left_light
+  - front_light
+  - front_right_door
+  - front_right_light
+  - hood
+  - left_mirror
+  - object
+  - right_mirror
+  - tailgate
+  - trunk
+  - wheel
