@@ -254,8 +254,9 @@ def copy_to_split(image_path: str, split_dir: str, label_path: str, split_label_
     """Copy image and label to split directory"""
     import shutil
 
+    label_path = Path(label_path)
     image_name = Path(image_path).name
-    label_name = Path(label_path).name
+    label_name = label_path.name
 
     split_image_dir = Path(split_dir) / 'images'
     split_label_dir = Path(split_label_dir) / 'labels'
