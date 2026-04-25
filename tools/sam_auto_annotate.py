@@ -250,16 +250,16 @@ def split_dataset(file_list: List[str], split_ratios: List[float]) -> Tuple[List
     return train_files, val_files, test_files
 
 
-def copy_to_split(image_path: str, split_dir: str, label_path: str, split_label_dir: str) -> Tuple[str, str]:
-    """Copy image and label to split directory"""
+def copy_to_split(image_path: str, output_dir: str, split_name: str, label_path: str) -> Tuple[str, str]:
+    """Copy image and label to YOLO standard split directory."""
     import shutil
 
     label_path = Path(label_path)
     image_name = Path(image_path).name
     label_name = label_path.name
 
-    split_image_dir = Path(split_dir) / 'images'
-    split_label_dir = Path(split_label_dir) / 'labels'
+    split_image_dir = Path(output_dir) / 'images' / split_name
+    split_label_dir = Path(output_dir) / 'labels' / split_name
 
     split_image_dir.mkdir(parents=True, exist_ok=True)
     split_label_dir.mkdir(parents=True, exist_ok=True)
@@ -269,7 +269,8 @@ def copy_to_split(image_path: str, split_dir: str, label_path: str, split_label_
 
     shutil.copy2(image_path, dest_image)
     if label_path.exists():
-        shutil.copy2(label_path, dest_label)
+        if label_path.resolve() != dest_label.resolve():
+            shutil.copy2(label_path, dest_label)
 
     return str(dest_image), str(dest_label)
 
@@ -381,13 +382,15 @@ def main():
 
     visualize = config['annotation'].get('visualize', False)
 
+    temp_label_dir = output_dir / '_tmp_labels'
+
     print("Processing images...")
     for image_path in tqdm(image_files, desc="Generating annotations"):
         try:
             process_image(
                 predictor,
                 str(image_path),
-                str(output_dir / 'labels'),
+                str(temp_label_dir),
                 visualize=visualize
             )
         except Exception as e:
@@ -403,16 +406,16 @@ def main():
 
     print("Organizing dataset structure...")
     for image_path in tqdm(train_files, desc="Train"):
-        label_path = Path(output_dir / 'labels') / f"{Path(image_path).stem}.txt"
-        copy_to_split(image_path, str(output_dir / 'train'), str(label_path), str(output_dir))
+        label_path = temp_label_dir / f"{Path(image_path).stem}.txt"
+        copy_to_split(image_path, str(output_dir), "train", str(label_path))
 
     for image_path in tqdm(val_files, desc="Val"):
-        label_path = Path(output_dir / 'labels') / f"{Path(image_path).stem}.txt"
-        copy_to_split(image_path, str(output_dir / 'val'), str(label_path), str(output_dir))
+        label_path = temp_label_dir / f"{Path(image_path).stem}.txt"
+        copy_to_split(image_path, str(output_dir), "val", str(label_path))
 
     for image_path in tqdm(test_files, desc="Test"):
-        label_path = Path(output_dir / 'labels') / f"{Path(image_path).stem}.txt"
-        copy_to_split(image_path, str(output_dir / 'test'), str(label_path), str(output_dir))
+        label_path = temp_label_dir / f"{Path(image_path).stem}.txt"
+        copy_to_split(image_path, str(output_dir), "test", str(label_path))
 
     class_names = config.get('class_names', [
         'back_bumper', 'back_door', 'back_glass', 'back_left_door', 'back_left_light',
