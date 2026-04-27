@@ -422,7 +422,7 @@ def main():
         'back_light', 'back_right_door', 'back_right_light', 'front_bumper', 'front_door',
         'front_glass', 'front_left_door', 'front_left_light', 'front_light', 'front_right_door',
         'front_right_light', 'hood', 'left_mirror', 'object', 'right_mirror',
-        'tailgate', 'trunk', 'wheel'
+        'tailgate', 'trunk', 'front_wheel', 'rear_wheel'
     ])
 
     create_dataset_yaml(str(output_dir), class_names)

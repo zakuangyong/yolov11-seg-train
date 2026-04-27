@@ -13,7 +13,7 @@ CONF = 0.25
 IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 VIEW_PARTS = {
     "front": ["front_right_light", "front_bumper", "right_mirror", "front_glass", "hood"],
-    "right_side": ["front_right_door", "back_right_door", "right_mirror", "wheel"],
+    "right_side": ["front_right_door", "back_right_door", "right_mirror", "front_wheel"],
     "back": ["back_light", "back_bumper", "trunk", "back_glass"],
 }
 
@@ -81,7 +81,9 @@ def _choose_best_index(part_name: str, indexes: list[int], centers_x: np.ndarray
 
 
 def _choose_front_wheel(cls_to_idx: dict[str, list[int]], centers_x: np.ndarray, confs: np.ndarray) -> int | None:
-    wheel_idxs = cls_to_idx.get("wheel", [])
+    wheel_idxs = cls_to_idx.get("front_wheel", [])
+    if not wheel_idxs:
+        wheel_idxs = cls_to_idx.get("wheel", [])
     if not wheel_idxs:
         return None
     if len(wheel_idxs) == 1:
@@ -134,7 +136,7 @@ def _export_parts_for_image(model: YOLO, img_path: Path, view_name: str, device:
     exported: list[str] = []
 
     for part_name in VIEW_PARTS[view_name]:
-        if part_name == "wheel":
+        if part_name == "front_wheel":
             chosen = _choose_front_wheel(cls_to_idx, centers_x, confs)
         else:
             idxs = cls_to_idx.get(part_name, [])

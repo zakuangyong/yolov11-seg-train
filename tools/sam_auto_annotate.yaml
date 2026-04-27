@@ -43,4 +43,5 @@ class_names:
   - right_mirror
   - tailgate
   - trunk
-  - wheel
+  - front_wheel
+  - rear_wheel
